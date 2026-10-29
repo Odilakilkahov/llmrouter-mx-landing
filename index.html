@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Router MX — API Gateway multi-modelo para devs mexicanos</title>
+<meta name="description" content="Un solo API key para OpenAI, DeepSeek y más. Failover automático, facturación en MXN con IVA, pago por SPEI y OXXO. Beta abierta para Mexico.">
+<style>
+  :root{--bg:#0b0d14;--card:#121626;--accent:#00d47e;--accent2:#6c5ce7;--text:#e9ecf5;--muted:#9aa3b8;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;line-height:1.5;}
+  .wrap{max-width:860px;margin:0 auto;padding:32px 20px 80px;}
+  header{text-align:center;padding:40px 0 20px;}
+  .badge{display:inline-block;background:rgba(0,212,126,.12);color:var(--accent);border:1px solid rgba(0,212,126,.3);border-radius:999px;padding:6px 14px;font-size:13px;margin-bottom:18px;}
+  h1{font-size:clamp(28px,5vw,44px);margin:0 0 14px;line-height:1.15;}
+  h1 span{color:var(--accent);}
+  .sub{color:var(--muted);font-size:17px;max-width:620px;margin:0 auto 28px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:36px 0;}
+  .card{background:var(--card);border:1px solid #1f2438;border-radius:14px;padding:22px;}
+  .card h3{margin:0 0 8px;font-size:17px;}
+  .card p{margin:0;color:var(--muted);font-size:14px;}
+  .price{background:linear-gradient(135deg,rgba(0,212,126,.08),rgba(108,92,231,.08));border:1px solid #1f2438;border-radius:16px;padding:28px;margin:36px 0;text-align:center;}
+  .price b{font-size:32px;color:var(--accent);}
+  form{background:var(--card);border:1px solid #1f2438;border-radius:16px;padding:28px;margin-top:40px;}
+  form h2{margin-top:0;font-size:22px;}
+  label{display:block;font-size:13px;color:var(--muted);margin:14px 0 6px;}
+  input,textarea{width:100%;padding:12px 14px;border-radius:10px;border:1px solid #2a3150;background:#0b0d14;color:var(--text);font-size:15px;}
+  input:focus,textarea:focus{outline:2px solid var(--accent);}
+  button{margin-top:20px;width:100%;padding:14px;border:none;border-radius:10px;background:var(--accent);color:#06130c;font-weight:700;font-size:16px;cursor:pointer;}
+  button:disabled{opacity:.6;cursor:default;}
+  .hp{position:absolute;left:-9999px;}
+  .msg{margin-top:14px;font-size:14px;}
+  .msg.ok{color:var(--accent);}
+  .msg.err{color:#ff6b6b;}
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:50px;}
+  .small{font-size:12px;color:var(--muted);margin-top:16px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="badge">Beta abierta · Mexico</span>
+    <h1>Un solo API key.<br><span>OpenAI + DeepSeek</span>, sin caídas.</h1>
+    <p class="sub">LLM Router MX es el gateway multi-modelo para developers y agencias en México. Si OpenAI falla, tu app sigue funcionando con DeepSeek — automático. Facturación en pesos, pago por SPEI y OXXO Pay.</p>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h3>🔁 Failover automático</h3>
+      <p>Tu request nunca se cae: si un proveedor falla o se satura, el router cambia de modelo sin que tu código lo note.</p>
+    </div>
+    <div class="card">
+      <h3>💳 Pago local</h3>
+      <p>SPEI y OXXO Pay en pesos mexicanos. Sin tarjeta internacional, sin esperar conversión de dólares.</p>
+    </div>
+    <div class="card">
+      <h3>🧾 Facturación clara</h3>
+      <p>Un solo balance, un solo invoice con IVA desglosado — nada de 3 tarjetas y 3 recibos en dólares.</p>
+    </div>
+    <div class="card">
+      <h3>⚡ Misma API de OpenAI</h3>
+      <p>Compatible con el formato /v1/chat/completions. Cambias la URL base y listo, cero refactor.</p>
+    </div>
+  </div>
+
+  <div class="price">
+    <div>Créditos API desde</div>
+    <b>$500 MXN</b>
+    <div style="color:var(--muted);font-size:14px;margin-top:6px">~25% sobre el costo del proveedor · sin mensualidad fija · IVA incluido en el recibo</div>
+  </div>
+
+  <form id="leadForm">
+    <h2>Entra a la beta</h2>
+    <p style="color:var(--muted);font-size:14px;margin-top:-6px">Estamos cerrando los primeros cupos con desarrolladores y agencias reales en México. Déjanos tus datos y te escribimos para activar tu acceso.</p>
+    <input class="hp" type="text" name="website" id="website" autocomplete="off" tabindex="-1">
+    <label for="name">Nombre</label>
+    <input id="name" required maxlength="80" placeholder="Tu nombre o el de tu agencia">
+    <label for="phone">Teléfono / WhatsApp</label>
+    <input id="phone" required placeholder="+52 55 1234 5678">
+    <label for="company">Empresa o proyecto (opcional)</label>
+    <input id="company" maxlength="120" placeholder="Nombre de tu startup, agencia o producto">
+    <label for="message">¿Qué estás construyendo? (opcional)</label>
+    <textarea id="message" maxlength="1000" rows="3" placeholder="Ej: chatbot de WhatsApp para comercio, backend de agente IA, etc."></textarea>
+    <button type="submit" id="submitBtn">Solicitar acceso a la beta</button>
+    <div class="msg" id="formMsg"></div>
+  </form>
+
+  <p class="small">LLM Router MX es un proyecto de QWIX GROUP. Beta en construcción — te contactamos por WhatsApp o Telegram antes de cualquier cobro.</p>
+  <footer>© 2026 QWIX GROUP · llmrouter.mx (en registro)</footer>
+</div>
+
+<script>
+const LEAD_ENDPOINT = "https://automation.178-105-119-125.sslip.io/api/lead";
+const startTime = Date.now();
+const form = document.getElementById('leadForm');
+const msg = document.getElementById('formMsg');
+const btn = document.getElementById('submitBtn');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  btn.disabled = true;
+  msg.className = 'msg';
+  msg.textContent = 'Enviando...';
+  const payload = {
+    name: document.getElementById('name').value,
+    phone: document.getElementById('phone').value,
+    company: document.getElementById('company').value,
+    message: document.getElementById('message').value,
+    lang: 'en',
+    source: 'llmrouter-mx-landing',
+    kind: 'task',
+    website: document.getElementById('website').value,
+    elapsedMs: Date.now() - startTime,
+  };
+  try {
+    const resp = await fetch(LEAD_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (resp.ok && data.ok !== false) {
+      msg.className = 'msg ok';
+      msg.textContent = '¡Listo! Te contactamos pronto por WhatsApp o Telegram.';
+      form.reset();
+    } else {
+      msg.className = 'msg err';
+      msg.textContent = 'Revisa tu nombre y teléfono e intenta de nuevo.';
+      btn.disabled = false;
+    }
+  } catch (err) {
+    msg.className = 'msg err';
+    msg.textContent = 'No se pudo enviar. Intenta de nuevo en un momento.';
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
